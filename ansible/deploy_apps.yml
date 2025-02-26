@@ -1,0 +1,54 @@
+---
+- name: Deploying IoT application in AKS
+  hosts: local
+  tasks:
+
+    #  Check and install Kafka
+    - name: Check if Kafka is deployed
+      command: kubectl get deployment kafka -n default
+      register: kafka_status
+      ignore_errors: true
+
+    - name: Deploy Kafka (if not exists)
+      command: helm install kafka bitnami/kafka --namespace default
+      when: kafka_status.rc != 0
+
+    #  Check and install InfluxDB
+    - name: Check if InfluxDB is deployed
+      command: kubectl get deployment influxdb -n default
+      register: influxdb_status
+      ignore_errors: true
+
+    - name: Deploy InfluxDB (if not exists)
+      command: helm install influxdb influxdata/influxdb --namespace default
+      when: influxdb_status.rc != 0
+
+    #  Check and install Grafana
+    - name: Check if Grafana is deployed
+      command: kubectl get deployment grafana -n default
+      register: grafana_status
+      ignore_errors: true
+
+    - name: Deploy Grafana (if not exists)
+      command: helm install grafana bitnami/grafana --namespace default
+      when: grafana_status.rc != 0
+
+    #  Check and deploy IoT Simulator (Producer)
+    - name: Check if IoT Simulator is running
+      command: kubectl get deployment iot-simulator -n default
+      register: simulator_status
+      ignore_errors: true
+
+    - name: Deploy IoT Simulator (if not exists)
+      command: kubectl apply -f yourpath/iot-simulator-deployment.yaml #check
+      when: simulator_status.rc != 0
+
+    #  Check and deploy Kafka Consumer
+    - name: Check if Kafka Consumer is running
+      command: kubectl get deployment iot-consumer -n default
+      register: consumer_status
+      ignore_errors: true
+
+    - name: Deploy Kafka Consumer (if not exists)
+      command: kubectl apply -f yourpath/iot-consumer-deployment.yaml #check
+      when: consumer_status.rc != 0

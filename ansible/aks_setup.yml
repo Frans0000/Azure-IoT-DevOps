@@ -1,0 +1,18 @@
+---
+- name: AKS configuration and credentials retrieval
+  hosts: local
+  tasks:
+    - name: Login to Azure CLI
+      command: az login
+      register: login_output
+      changed_when: false
+
+    - name: Set Azure subscription
+      command: az account set --subscription "Azure for Students" #might be different
+      changed_when: false
+
+    - name: Retrieve AKS credentials
+      command: az aks get-credentials --resource-group iot-project-rg --name iot-aks-cluster
+      changed_when: false
+
+

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iot-consumer
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iot-consumer
+  template:
+    metadata:
+      labels:
+        app: iot-consumer
+    spec:
+      containers:
+      - name: consumer
+        image: yourRegistryName.azurecr.io/iot-consumer:latest #check registry name eg: az acr list --query '[].{Name:name, LoginServer:loginServer}' --output table
+        env:
+          - name: INFLUXDB_URL
+            value: "http://influxdb.default.svc.cluster.local:8086"
+          - name: INFLUXDB_TOKEN
+            value: "" #check your token
+          - name: INFLUXDB_ORG
+            value: "influxdata" #check
+          - name: INFLUXDB_BUCKET
+            value: "iot_data" #check
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iot-consumer-service
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: iot-consumer
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080

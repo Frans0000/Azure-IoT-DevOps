@@ -1,0 +1,59 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build_and_push:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in to Azure Container Registry
+        run: az acr login --name yourRegsitry #check here and below
+
+      - name: Build and push Producer image
+        run: |
+          docker build -t yourRegsitry.azurecr.io/iot-producer:latest ./producerKafka
+          docker push yourRegsitry.azurecr.io/iot-producer:latest
+
+      - name: Build and push Consumer image
+        run: |
+          docker build -t yourRegsitry.azurecr.io/iot-consumer:latest ./consumerKafka
+          docker push yourRegsitry.azurecr.io/iot-consumer:latest
+
+  deploy:
+    name: Deploy to AKS
+    needs: build_and_push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Kubernetes CLI
+        uses: azure/setup-kubectl@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group iot-project-rg --name iot-aks-cluster --overwrite-existing
+
+      - name: Apply Kubernetes deployments
+        run: |
+          kubectl apply -f iot-simulator-deployment.yaml
+          kubectl apply -f consumerKafka/iot-consumer-deployment.yaml
