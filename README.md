@@ -132,7 +132,7 @@ Ensure you have the required resources running by executing:
 kubectl get pods -n default
 ```
 
-![Pod Status](https://github.com/user-attachments/assets/ee5ad240-07d9-458c-97bf-ba81cecbc50b)
+![Pod Status](images/zdj1.png)
 
 To check the sent data, run:
 
@@ -140,7 +140,7 @@ To check the sent data, run:
 kubectl logs -f iot-simulator-yours
 ```
 
-![IoT Simulator Logs](https://github.com/user-attachments/assets/38d593eb-4901-4ccf-bf12-3c0d1e08439e)
+![IoT Simulator Logs](images/zdj2.png)
 
 ---
 
@@ -160,7 +160,7 @@ influx query '
   |> filter(fn: (r) => r._measurement == "iot_measurements")'
 ```
 
-![InfluxDB Query](https://github.com/user-attachments/assets/1158fdb1-c28e-4ecc-94e9-4dae6b10b8d0)
+![InfluxDB Query](images/zdj3.png)
 
 ---
 
@@ -184,7 +184,7 @@ from(bucket: "iot_data")
   |> yield()
 ```
 
-![Grafana Query](https://github.com/user-attachments/assets/0ae91e9e-b366-433c-ba4c-3a02d9d71b7f)
+![Grafana Query](images/zdj4.png)
 
 Alternative query to filter by device ID:
 
@@ -198,11 +198,11 @@ from(bucket: "iot_data")
   |> yield(name: "mean")
 ```
 
-![Filtered Query](https://github.com/user-attachments/assets/62f11dd6-4f46-4816-81f1-ea04c1abebac)
+![Filtered Query](images/zdj5.png)
 
 You can also set up alerts in Grafana, such as sending an email notification when the temperature exceeds a predefined threshold.
 
-![Grafana Alerts](https://github.com/user-attachments/assets/a1a9d271-7699-4c76-96f3-f45d6a53b790)
+![Grafana Alerts](images/zdj6.png)
 
 ---
 
@@ -220,7 +220,7 @@ If everything is set up correctly, each time the code is updated, the CI/CD pipe
 - Build & push Docker images
 - Deploy the application to AKS
 
-![CI/CD Pipeline](https://github.com/user-attachments/assets/4b58c1fa-5df1-4cbb-b7d8-d5914a33137f)
+![CI/CD Pipeline](images/zdj7.png)
 
 
 ## Summary
