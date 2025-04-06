@@ -15,8 +15,7 @@ The IoT DevOps project integrates Terraform, Kubernetes, Docker, Kafka, InfluxDB
 8. **Ansible** - Automation of deployment processes.
 9. **GitHub Actions** - CI/CD pipeline for deployment automation.
 
-![image](https://github.com/user-attachments/assets/9f323ff2-027a-4cca-a073-c3aa9a86bf82)
-
+![schemat](images/schematProjekt.png)
 
 ## Requirements
 
